@@ -18,17 +18,17 @@
 
 const Redis = require("ioredis");
 
+// In production, set REDIS_URL to your hosted Redis (e.g. Upstash):
+//   rediss://default:<password>@<host>:<port>
+// Locally it falls back to a Redis running on 127.0.0.1:6379.
+const REDIS_URL = process.env.REDIS_URL;
+const makeClient = () => (REDIS_URL ? new Redis(REDIS_URL) : new Redis({ host: "127.0.0.1", port: 6379 }));
+
 // Publisher client — used to SEND messages and READ/WRITE data
-const publisher = new Redis({
-  host: "127.0.0.1", // localhost — where Redis is running
-  port: 6379,        // default Redis port
-});
+const publisher = makeClient();
 
 // Subscriber client — used ONLY to LISTEN for messages
-const subscriber = new Redis({
-  host: "127.0.0.1",
-  port: 6379,
-});
+const subscriber = makeClient();
 
 // Log connection status
 publisher.on("connect", () => console.log("✅ Redis publisher connected"));

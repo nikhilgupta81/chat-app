@@ -18,15 +18,19 @@ const { initSocket } = require("./socket");
 const app    = express();
 const server = http.createServer(app); // Socket.io needs the raw HTTP server
 
+// Where the frontend is hosted. In production set CLIENT_URL to your Vercel URL
+// (e.g. https://my-chat.vercel.app); falls back to the Vite dev server locally.
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+
 // ── CORS setup ─────────────────────────────────────────────
 // Without this, browser blocks requests from different origins
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: CLIENT_URL }));
 app.use(express.json());
 
 // ── Attach Socket.io to the HTTP server ────────────────────
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",  // React dev server
+    origin: CLIENT_URL,  // React frontend
     methods: ["GET", "POST"],
   },
 });

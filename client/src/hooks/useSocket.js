@@ -13,7 +13,9 @@ import { io } from "socket.io-client";
 import { playPing } from "../utils/sound";
 import { conversationOf } from "../utils/conversation";
 
-const SERVER_URL = "http://localhost:4000"; // Our Node.js server
+// In production this is set via Vite env var (VITE_SERVER_URL);
+// falls back to localhost for local development.
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:4000";
 
 export function useSocket() {
   // useRef stores the socket without causing re-renders when it changes
