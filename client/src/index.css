@@ -1,0 +1,168 @@
+/* ============================================================
+   index.css — Global theme, fonts & animations
+   ------------------------------------------------------------
+   All colors live here as CSS variables (the "design tokens").
+   Components reference them via var(--x), so the whole app can
+   be re-themed from this single file.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Background gradient (animated on the login screen) */
+  --bg-1: #0f172a;
+  --bg-2: #1e1b4b;
+  --bg-3: #312e81;
+
+  /* Glass surfaces */
+  --surface:        rgba(255, 255, 255, 0.05);
+  --surface-strong: rgba(255, 255, 255, 0.09);
+  --border:         rgba(255, 255, 255, 0.10);
+  --border-strong:  rgba(255, 255, 255, 0.18);
+
+  /* Text */
+  --text:       #e2e8f0;
+  --text-dim:   #94a3b8;
+  --text-faint: #64748b;
+
+  /* Accent */
+  --accent-1:    #6366f1;
+  --accent-2:    #8b5cf6;
+  --accent-grad: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --accent-soft: rgba(99, 102, 241, 0.15);
+
+  /* Status */
+  --online:  #22c55e;
+  --offline: #ef4444;
+
+  /* Bubbles */
+  --bubble-other: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+  color: var(--text);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Custom scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+
+textarea { overflow-y: hidden; }
+
+input::placeholder,
+textarea::placeholder { color: var(--text-faint); }
+
+/* ── Keyframe animations ────────────────────────────────────── */
+
+/* Slow drift of the login background gradient */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Each new message slides up + fades in */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bouncing typing dots */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.4; }
+  30%           { transform: translateY(-5px); opacity: 1;   }
+}
+
+/* Pulsing "live" status dot */
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+  70%  { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Gentle float for the logo */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* Utility classes used by components */
+.msg-enter   { animation: fadeInUp 0.28s ease both; }
+.logo-float  { animation: float 3s ease-in-out infinite; }
+.live-dot    { animation: livePulse 2s infinite; }
+
+button { font-family: inherit; }
+
+/* ── WhatsApp-style chat wallpaper (subtle doodle on dark) ──── */
+.chat-wallpaper {
+  background-color: var(--bg-1);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='120'%20height='120'%3E%3Cg%20fill='none'%20stroke='%23fff'%20stroke-opacity='0.05'%20stroke-width='2'%3E%3Ccircle%20cx='28'%20cy='28'%20r='9'/%3E%3Cpath%20d='M62%2018h34a6%206%200%200%201%206%206v12a6%206%200%200%201-6%206H80l-9%208v-8h-9a6%206%200%200%201-6-6V24a6%206%200%200%201%206-6z'/%3E%3Cpath%20d='M22%2086q9-13%2018%200'/%3E%3Ccircle%20cx='92'%20cy='92'%20r='10'/%3E%3Cpath%20d='M87%2092a5%205%200%200%200%2010%200'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Speech-bubble tails ────────────────────────────────────── */
+.bubble-base { position: relative; }
+.bubble-other.has-tail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -7px;
+  border-style: solid;
+  border-width: 0 8px 9px 0;
+  border-color: transparent var(--bubble-other) transparent transparent;
+}
+.bubble-own.has-tail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -7px;
+  border-style: solid;
+  border-width: 0 0 9px 8px;
+  border-color: transparent transparent transparent var(--accent-1);
+}
+
+/* ── Reaction picker pop-in ─────────────────────────────────── */
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.reaction-bar { animation: popIn 0.15s ease both; }
+.reaction-emoji {
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  line-height: 1;
+}
+.reaction-emoji:hover { transform: scale(1.35); }
+
+/* ── Scroll-to-bottom button ────────────────────────────────── */
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.scroll-btn { animation: fadeScale 0.18s ease both; }
+
+/* ── Emoji picker panel ─────────────────────────────────────── */
+.emoji-panel { animation: popIn 0.15s ease both; }
+.emoji-cell {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s, transform 0.12s;
+}
+.emoji-cell:hover { background: var(--surface-strong); transform: scale(1.15); }
